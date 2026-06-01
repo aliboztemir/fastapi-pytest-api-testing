@@ -1,58 +1,75 @@
-# QA Test Engineer: Assignment
-Tests of the API that calculates the best route.
+# Task Management API
 
-## Preconditions:
+A professional FastAPI task management service demonstrating clean architecture, comprehensive test coverage across multiple test layers, and containerised deployment with PostgreSQL.
 
-- Python 3
+## Tech Stack
 
-## Clone the project
+- **FastAPI** — async-ready Python web framework
+- **SQLAlchemy 2.x** — ORM with `Mapped` column syntax
+- **Pydantic v2** — request/response validation
+- **SQLite** (dev/test) / **PostgreSQL** (production)
+- **pytest** — unit, component, integration and end-to-end test suites
+- **Docker + Docker Compose** — containerised deployment
 
-```
-git clone https://github.com/aliboztemir/PyTest-ApiAutomation
-```
-
-## Run local
-
-### Install dependencies
+## Project Structure
 
 ```
++-- app/
+¦   +-- main.py          # FastAPI application entry point
+¦   +-- database.py      # SQLAlchemy engine and session
+¦   +-- models.py        # ORM models
+¦   +-- schemas.py       # Pydantic request/response schemas
+¦   +-- routers/
+¦       +-- tasks.py     # Task CRUD endpoints
++-- tests/
+¦   +-- conftest.py      # Shared fixtures (TestClient, db_session)
+¦   +-- unit/            # Schema validation tests
+¦   +-- component/       # Endpoint tests with in-memory SQLite
+¦   +-- integration/     # Direct database operation tests
+¦   +-- e2e/             # Full workflow tests
++-- Dockerfile
++-- docker-compose.yml
++-- requirements.txt
+```
+
+## Running Locally
+
+```bash
 pip install -r requirements.txt
-```
-
-### Run server
-
-```
 uvicorn app.main:app --reload
 ```
 
-### Run test
+Visit http://localhost:8000/docs for the interactive API documentation.
 
-```
-pytest test/test.py --html=report.html --self-contained-html
-```
+## Running Tests
 
-## Run with docker
+```bash
+# All tests
+pytest -v
 
-### Run server
+# By layer
+pytest -v -m unit
+pytest -v -m component
+pytest -v -m integration
+pytest -v -m e2e
 
-```
-docker-compose up -d --build
-```
-
-### Run test
-
-```
-docker-compose exec app pytest test/test.py
+# With coverage
+pytest --cov=app --cov-report=html
 ```
 
-## API documentation (provided by Swagger UI)
+## Running with Docker
 
-```
-http://127.0.0.1:8000/docs
+```bash
+docker-compose up --build
 ```
 
-##  Project Structure
-* Programming Language: Python 3
-* IDE: PyCharm
-* OS : macOs x
-* mock APIs were created with fastapi
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/` | Health check |
+| GET | `/tasks/` | List all tasks |
+| POST | `/tasks/` | Create a task |
+| GET | `/tasks/{id}` | Get a task |
+| PUT | `/tasks/{id}` | Update a task |
+| DELETE | `/tasks/{id}` | Delete a task |

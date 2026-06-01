@@ -1,24 +1,16 @@
-# pull official base image
-FROM python:3.8.1-alpine
+FROM python:3.11-slim
 
-# set work directory
-WORKDIR /src
+WORKDIR /app
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# copy requirements file
-COPY ./requirements.txt /src/requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-# install dependencies
-RUN set -eux \
-    && apk add --no-cache --virtual .build-deps build-base \
-    libressl-dev libffi-dev gcc musl-dev python3-dev \
-    postgresql-dev \
-    && pip install --upgrade pip setuptools wheel \
-    && pip install -r /src/requirements.txt \
-    && rm -rf /root/.cache/pip
+COPY . .
 
-# copy project
-COPY . /src/
+EXPOSE 8000
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

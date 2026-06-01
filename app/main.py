@@ -1,19 +1,18 @@
-from fastapi import FastAPI, HTTPException
-from app.api import api
+from fastapi import FastAPI
+from app.database import Base, engine
+from app.routers import tasks
 
-app = FastAPI()
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(
+    title="Task Management API",
+    description="A FastAPI task management service with SQLAlchemy and PostgreSQL.",
+    version="1.0.0",
+)
+
+app.include_router(tasks.router)
 
 
 @app.get("/")
-def root():
-    return {"message": "Fast API in Python"}
-
-
-@app.get("/deliveries", status_code=200)
-def read_user():
-    return api.deliveries_for_planning()
-
-
-@app.get("/route", status_code=200)
-def read_user():
-    return api.planned_routes()
+def health_check():
+    return {"status": "ok", "message": "Task Management API is running"}
