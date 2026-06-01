@@ -6,6 +6,7 @@ from app.database import get_db
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
+# Task CRUD endpoints
 
 @router.get("/", response_model=List[schemas.TaskResponse])
 def list_tasks(db: Session = Depends(get_db)):
